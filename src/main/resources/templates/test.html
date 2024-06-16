@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="/assets/main.css">
+    <script src="https://kit.fontawesome.com/eee46aa2f8.js" crossorigin="anonymous">
+        function toggleEdit() {
+    var inputs = document.getElementsByTagName("input");
+    var textareas = document.getElementsByTagName("textarea");
+    var selects = document.getElementsByTagName("select");
+    var editButton = document.querySelector(".footer button");
+
+    if (editButton.innerText === "Edit") {
+        editButton.innerText = "Save";
+        editButton.classList.remove("btn-light");
+        editButton.classList.add("btn-primary");
+
+        for (var i = 0; i < inputs.length; i++) {
+            inputs[i].removeAttribute("disabled");
+        }
+
+        for (var j = 0; j < textareas.length; j++) {
+            textareas[j].removeAttribute("disabled");
+        }
+
+        for (var k = 0; k < selects.length; k++) {
+            selects[k].removeAttribute("disabled");
+        }
+    }else{
+		if(validateBookForm() === true) {
+			document.getElementById("bookForm").submit();
+		}
+	}
+}
+function confirmAddBook() {
+  var result = confirm("Bạn có muốn thêm quyển sách này không?");
+      return result;
+}
+function handleFileInputChange(event) {
+      var file = event.target.files[0];
+      var reader = new FileReader();
+
+      reader.onload = function(e) {
+        var image = document.getElementById("book-image");
+        image.src = e.target.result;
+      };
+
+      reader.readAsDataURL(file);
+    }
+    </script>
+    <style>
+        .container {
+  display: flex;
+  justify-content: space-between;
+}
+.title-author-container {
+  display: flex;
+  align-items: center;
+}
+
+.date-pages-container {
+  display: flex;
+  align-items: center;
+}
+.title-input {
+  margin-right: 10px;
+}
+
+.author-input {
+    order: 2;
+}
+.date-input {
+    order:4;
+}
+.pages-input {
+    order:4;
+}
+
+
+.divImage {
+  order: 2;
+}
+
+.custom-file-upload {
+  order: 1;
+  margin-right: 20px;
+}
+
+    </style>
+</head>
+
+<body>
+    <header class="header">
+			<a th:if="${session.user != null}" href="/logout" style="position: fixed; right:0px; top: 25px;
+			 background-color: white; padding: 5px; font-size: 20px; font-weight: 600; border-radius: 5px;">Đăng xuất</a>
+			<a href="/books" style="font-size: 20px; font-weight: 500; position: fixed; top: 50px; left: 130px; color: white;">
+				<i class="fa-solid fa-book"
+					style="font-size: 30px; position: relative; top: -25px; left: 50%;">
+				</i>
+				<span>Trang chủ</span>
+			</a>
+	</header>
+    <div class="container1" style="height: 150px;">
+        <h1 th:if="${thongBaoLoi != null}" th:text="${thongBaoLoi}" class="container" style="padding: 0px; font-style: italic; color: red;">Thông tin trùng</h1>
+    </div>
+    <form th:object="${book}" th:action="@{save/{id}(id=${book.id})}" th:method="${id} < 0 ? POST : PUT" name="bookForm" enctype="multipart/form-data">
+        <div class="container">
+            <div class="insideContainer">
+                <div class="title-author-container">
+                    <div class="blockNoPadding title-input">
+                        <label class="blockNoPadding" for="title">Tiêu đề <span style="color:red;">*</span></label>
+                        <input name="titleInput" id="titleInput" type="text" th:field="${book.title}" required th:disabled="${session.user == null || (session.user != null && session.user.role != 'ADMIN')}", class="title-input">
+                    </div>
+                    <div class="blockNoPadding author-input">
+                        <label class="blockNoPadding" for="author">Tác giả <span style="color:red;">*</span></label>
+                        <input name="authorInput" id="authorInput" type="text" th:field="${book.author}" required th:disabled="${session.user == null || (session.user != null && session.user.role != 'ADMIN')}", class="author-input">
+                    </div>
+                </div>  
+                <div style="margin-right: 20px;">
+                    <label class="blockNoPadding" for="descr">Mô tả về sách <span style="color:red;">*</span></label>
+                    <textarea class="blockNoPadding" style="margin: 0px;" name="descrInput" id="descrInput" rows="5" th:field="${book.description}" required th:disabled="${session.user == null || (session.user != null && session.user.role != 'ADMIN')}"></textarea>
+                </div>
+                <div class="date-pages-container">
+                    <div class="blockNoPadding" date-input>
+                        <label class="blockNoPadding" for="">Ngày phát hành <span style="color:red;">*</span></label>
+                        <input type="date" name="rlsdateInput" id="rlsdateInput" th:field="${book.date}" required th:disabled="${session.user == null || (session.user != null && session.user.role != 'ADMIN')}">
+                    </div>
+                    <div class="blockNoPadding" pages-input>
+                        <label class="blockNoPadding" for="">Số trang <span style="color:red;">*</span></label>
+                        <input type="number" name="pagesInput" id="pagesInput" th:field="${book.nop}" required th:disabled="${session.user == null || (session.user != null && session.user.role != 'ADMIN')}">
+                    </div>
+                </div>
+                <div class="blockNoPadding">
+                    <label class="blockNoPadding" for="">Thể loại <span style="color:red;" required>*</span></label>
+                    <select name="category_id" id="category" th:disabled="${session.user == null || (session.user != null && session.user.role != 'ADMIN')}">
+                        <th:block th:each="category : ${categories}">
+                            <option th:value="${category.id}" th:text="${category.name}" th:selected="${book.category_id == category.id}"></option>
+                        </th:block>
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="insideContainer" style="max-height: 500px; max-width: 500px">
+<img id="book-image" style="max-height: 500px; max-width: 500px" />
+
+                <div class="divImage" id="pathImg" name="pathImg">
+<img style="max-height: 500px; max-width: 500px" id="bookPathImg">
+                    <input hidden="" id="bookCoverUrlImgInput" th:disabled="${session.user == null || (session.user != null && session.user.role != 'ADMIN')}">
+                </div>
+                <div class="divImage" id="pathImg" name="pathImg">
+                    <img th:src="${book.pathImg}" style="max-height: 500px; max-width: 500px" id="bookPathImg">
+                    <input hidden="" id="bookCoverUrlImgInput" th:disabled="${session.user == null || (session.user != null && session.user.role != 'ADMIN')}">
+                </div>
+                <label for="uploadFile" class="custom-file-upload">
+                    <input type="file" id="file" name="file" th:image="${book.pathImg}" onchange="handleFileInputChange(event)" th:disabled="${session.user == null || (session.user != null && session.user.role != 'ADMIN')}">
+                    Upload <span th:disabled="${session.user == null || (session.user != null && session.user.role != 'ADMIN')}" style="color:red;">*</span>
+                </label>
+                
+
+                <p id="fileDisplay">Chưa chọn ảnh nào</p>
+            </div>
+        </div>
+        <footer class="footer">
+            <button th:hidden="${session.user == null || (session.user != null && session.user.role != 'ADMIN') || book.id <= 0}" type="submit" class="btn btn-light" id="save-button" value="Save Book" style="border: 1px solid white; font-size: 15px; position: absolute; bottom: 10px; right: 10px;" onclick="">Save</button>
+            <button th:hidden="${session.user == null || (session.user != null && session.user.role != 'ADMIN') || book.id > 0}" type="submit" onclick="return confirmAddBook()" class="btn btn-success" style="border: 1px solid white; font-size: 15px; position: absolute; bottom: 10px; right: 10px;">Add Book</button>
+        </footer>
+    </form>
+</body>
+
+</html>

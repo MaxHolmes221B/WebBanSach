@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>User</title>
+</head>
+<body>
+<div class="row">
+<h1>User</h1>
+</div>
+<form th:object="${user}" th:action="@{save/{id}(id=${user.id})}"
+onsubmit="return validateForm()" th:method="${id < 0 ? 'POST' : 'PUT'}" name="userForm">
+Name: <input type="text" name="name" th:value="${user.name}" required><br /> 
+Date of Birth: <input type="date" name="dob" th:value="${user.dob}"><br />
+Address: <input type="text" name="address" th:value="${user.address}" required><br />
+Phone Number: <input type="text" name="pnb" th:value="${user.pnb}" required><br />
+Email: <input type="email" name="email" th:value="${user.email}"><br />
+<input type="submit" value="Save User">
+</form>
+</body>
+</html>

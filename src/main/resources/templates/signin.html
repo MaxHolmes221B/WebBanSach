@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Sign In</title>
+    <style>
+        /* CSS styles for the sign-in page */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 20px;
+            border: 1px solid #cccccc;
+            border-radius: 5px;
+            position: relative; /* Add this line */
+        }
+
+        .form-group {
+            margin-bottom: 10px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 5px;
+        }
+
+        .form-group button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: #ffffff;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        .error {
+            color: #FF0000;
+            margin-top: 5px;
+        }
+
+        .signup-button {
+            position: absolute;
+            top: 0;
+            right: 0;
+            margin: 10px; /* Add margin for spacing */
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Sign In</h2>
+    <form method="post" action="/signin">
+        <div class="form-group">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+        </div>
+        <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        <div class="form-group">
+            <button type="submit">Sign In</button>
+        </div>
+        <div class="error">
+            <td th:text="${thongBao}"></td>
+        </div>
+        <div class="signup-button">
+            <a href="/signup">Đăng ký tài khoản mới</a>
+        </div>
+    </form>
+        
+</div>
+</body>
+</html>

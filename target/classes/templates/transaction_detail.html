@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>User</title>
+</head>
+<body>
+<div class="row">
+<h1>User</h1>
+</div>
+<form th:object="${transaction}" th:action="@{save/{id}(id=${transaction.id})}"
+onsubmit="return validateForm()" th:method="${id < 0 ? 'POST' : 'PUT'}" name="transactionForm">
+Số lượng mua: <input type="number" name="name" th:value="${transaction.quantity}" required><br /> 
+
+<input type="submit" value="Mua">
+</form>
+</body>
+</html>

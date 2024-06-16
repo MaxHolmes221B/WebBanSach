@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Book</title>
+<style>
+   body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: stretch;
+  padding: 20px;
+}
+
+.left-column {
+  flex: 1;
+}
+
+.right-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+h1 {
+  color: #333;
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+input[type="text"],
+input[type="number"],
+textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+textarea {
+  height: 100px;
+}
+.image-container {
+  margin-top: 20px;
+  text-align: center;
+}
+    footer {
+        margin-top: 20px;
+        text-align: right;
+    }
+</style>
+
+<script>
+    var checkEdit = true;
+
+    function handleFileInputChange(event) {
+      var file = event.target.files[0];
+      var reader = new FileReader();
+
+      reader.onload = function(e) {
+        var image = document.getElementById("book-image");
+        image.src = e.target.result;
+      };
+
+      reader.readAsDataURL(file);
+    }
+
+    function toggleEdit() {
+        checkEdit = false;
+        var titleInput = document.getElementById("title-input");
+        var authorInput = document.getElementById("author-input");
+        var dateInput = document.getElementById("date-input");
+        var nopInput = document.getElementById("nop-input");
+        var descriptionTextarea = document.getElementById("description-textarea");
+        var fileInput = document.getElementById("file-input");
+        var saveButton = document.getElementById("save-button");
+
+        titleInput.disabled = checkEdit;
+        authorInput.disabled = checkEdit;
+        dateInput.disabled = checkEdit;
+        nopInput.disabled = checkEdit;
+        descriptionTextarea.disabled = checkEdit;
+        fileInput.hidden = checkEdit;
+        saveButton.hidden = checkEdit;
+    }
+    function confirmAddBook() {
+  var result = confirm("Bạn có muốn thêm quyển sách này không?");
+      return result;
+}
+</script>
+
+</head>
+
+<body>
+    <form th:object="${book}" th:action="@{save/{id}(id=${book.id})}" th:method="${id} < 0 ? POST : PUT" name="bookForm" enctype="multipart/form-data">
+    
+<div class="container">
+    <div class="left-column">
+        <h1>Book</h1>
+        
+        Tiêu đề: <input type="text" id="title-input" name="title" th:value="${book.title}" required th:disabled="${session.user == null || (session.user != null && session.user.role != 'ADMIN')}"><br/><br/>
+        Tác giả: <input type="text" id="author-input" name="author" th:value="${book.author}" required th:disabled="${session.user == null || (session.user != null && session.user.role != 'ADMIN')}"><br/><br/>
+        Ngày phát hành: <input type="date" id="date-input" name="date" th:value="${book.date}" required th:disabled="${session.user == null || (session.user != null && session.user.role != 'ADMIN')}"><br/><br/>
+        Số trang: <input type="number" id="nop-input" name="nop" th:value="${book.nop}" required th:disabled="${session.user == null || (session.user != null && session.user.role != 'ADMIN')}"><br/><br/>
+        Mô tả sách: <textarea id="description-textarea" name="description" th:text="${book.description}" th:disabled="${session.user == null || (session.user != null && session.user.role != 'ADMIN')}"></textarea><br/><br/>
+        Thể loại: <select name="category_id" id="category" th:disabled="${session.user == null || (session.user != null && session.user.role != 'ADMIN')}">
+            <th:block th:each="category : ${categories}">
+                <option th:value="${category.id}" th:text="${category.name}" th:selected="${book.category_id == category.id}"></option>
+            </th:block>
+        </select>
+    </div>
+    <div class="right-column">
+        <div class="image-container">
+            Ảnh bìa: <input type="file" id="file-input" name="file" alt="Image" th:image="${book.pathImg}" th:hidden="${session.user == null || (session.user != null && session.user.role != 'ADMIN')}" onchange="handleFileInputChange(event)"/><br/><br/>
+            <img id="book-image" alt="Book Image" style="max-height: 500px; max-width: 500px" th:src="${book.pathImg}"/>
+        </div>
+    </div>
+</div>
+<div class="error">
+    <td th:text="${thongBaoLoi}"></td>
+</div>
+<footer>
+  <input type="submit" id="save-button" value="Save Book" th:hidden="${session.user == null || (session.user != null && session.user.role != 'ADMIN') || book.id <= 0}">
+  <input type="submit" id="add-button" value="Add Book" onclick="return confirmAddBook()" th:hidden="${session.user == null || (session.user != null && session.user.role != 'ADMIN') || book.id > 0}">
+  <!-- <button type="button" id="edit-button" onclick="toggleEdit()" th:hidden="${checkEdit == false || session.user == null || (session.user != null && session.user.role != 'ADMIN')}" th:attr="data-checkEdit=${checkEdit}">Edit</button> -->
+</footer>
+</form>
+</body>
+</html>
